@@ -1,5 +1,9 @@
 import { Router } from "express";
 import fs from "fs"
+import CartManager from "../dao/manager/manager_mongo/cart.manager.js"
+import { cartModel } from "../dao/models/carts.model.js";
+
+const cartManager = new CartManager()
 
 const router = Router();
 
@@ -16,6 +20,41 @@ router.post('/', async (req, res) => {
     })
 })
 
+//Delete a specific product in some cart.
+router.delete("/:cid/product/:pid", async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const cart = await cartManager.deleteProductById(cid, pid);
+        res.json({ cart });
+    } catch (error) {
+        res.json({ error });
+    }
+});
+
+router.put("/:cid", async (req, res) => {
+    try {
+      const { cid } = req.params;
+      const products = req.body;
+      await cartManager.insertProducts(cid, products)
+      const cart = await cartManager.getCartById(cid)
+      res.json({ cart });
+    } catch (error) {
+      res.json({ error })
+    }
+  })
+  
+  router.put("/:cid/product/:pid", async (req, res) => {
+    try {
+      const { cid, pid } = req.params;
+      const { quantity } = req.body;
+      await cartManager.updateQuantity(cid, pid, quantity);
+      const cart = await cartManager.getCartById(cid);
+      res.json({ cart });
+    } catch (error) {
+      res.json({ error });
+    }
+  });
+
 //Get cart by ID.
 router.get('/:cid', async (req, res) => {
     let carts = JSON.parse(await fs.promises.readFile('./src/files/carts.json', 'utf-8'))
@@ -29,9 +68,9 @@ router.get('/:cid', async (req, res) => {
 
     let products = cart.products
 
-    res.send({ 
+    res.send({
         status: "OK.",
-        products 
+        products
     })
 })
 
@@ -79,5 +118,15 @@ router.post('/:cid/product/:pid', async (req, res) => {
         cart
     })
 })
+
+router.delete("/:cid", async (req, res) => {
+    try {
+      const { cid } = req.params;
+      const cart = await cartManager.deleteById(cid)
+      res.json({ cart });
+    } catch (error) {
+      res.json({ error });
+    }
+  });
 
 export default router;

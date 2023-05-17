@@ -1,0 +1,18 @@
+<h1>Productos</h1>
+
+<div class="items">
+  {{#each docs}}
+    <div class="card">
+      <h2>{{title}}</h2>
+      <p>{{description}}</p>
+      <p>Price: ${{price}}</p>
+    </div>
+  {{/each}}
+</div>
+
+<hr>
+<a href="{{products.prevPage}}">Previous</a>
+<p>{{products.page}}</p>
+<a href="{{products.nextPage}}">Next</a>
+
+<script src="/js/products.js"></script>  

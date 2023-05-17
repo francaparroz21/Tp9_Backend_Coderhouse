@@ -1,33 +1,23 @@
 //Imports
 import { Router } from "express";
 import fs from "fs"
-import { uploaderThumbnails } from "../utils.js";
 import { socketServer } from "../app.js";
+import { ProductManager } from "../dao/manager/manager_mongo/product.manager.js";
+
+const productManager = new ProductManager()
 
 //Create router
 const router = Router();
 
 //Get all products.
 router.get("/", async (req, res) => {
-    const products = JSON.parse(await fs.promises.readFile('./src/files/products.json', 'utf-8'))
-    const limit = req.query.limit
-
-    if (!limit) return res.send({
-        status: 'OK.',
-        products
-    })
-    else if (limit >= 0 && limit <= products.length) {
-        const productLimited = products.slice(0, limit)
-        return res.send({
-            status: 'OK.',
-            productLimited
-        })
+    try{
+        const { limit, page, query, sort } = req.query;
+        const products = await productManager.get(limit, page, query, sort);
+        res.status(200).json({ products });
+    }catch(error){
+        console.log(`error: ${error}`)
     }
-
-    res.status(400).send({
-        status: "Bad request.",
-        error: `Bad request, limit '${limit}' incorrect.`
-    })
 })
 
 //Get product by ID.

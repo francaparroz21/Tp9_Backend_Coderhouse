@@ -1,0 +1,13 @@
+<h1>Cart</h1>
+
+<div class="items">
+  {{#each products}}
+    <div class="card">
+      <h2>{{title}}</h2>
+      <p>{{description}}</p>
+      <p>Price: ${{price}}</p>
+    </div>
+  {{/each}}
+</div>
+
+<script src="/js/carts.js"></script>  

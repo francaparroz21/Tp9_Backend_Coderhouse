@@ -1,25 +1,28 @@
 import { productModel } from "../../models/products.model.js"
 
 export class ProductManager{
-    async getProducts(){
+    async getProducts(limit = 10 , page = 1, query, sort){
         try{
-            const response = await productModel.find()
-            
-            if(!response.length) return{ status: 404, response: "No products." }
-            
-            const products = response.map(product => (
-                {
-                    id: product.id,
-                    title: product.title,
-                    description: product.description,
-                    category: product.category,
-                    thumbnails: product.thumbnails,
-                    stock: product.stock,
-                    price: product.price,
-                    code: product.code,
-                    status: product.status
+
+            let modelQuery;
+            !query ? (modelQuery = {}) : (modelQuery = { category: query });
+
+            const params = {
+                page,
+                limit,
+                sort: { price: sort }
+              }
+
+            const products = await productModel.paginate(
+                modelQuery,
+                params,
+                function(error, result){
+                    return result
                 }
-            ))
+            )
+
+            products.nextPage = `http://localhost:${process.env.port}/products?page=${products.nextPage}&limit=${limit}`
+            products.prevPage = `http://localhost:${process.env.port}/products?page=${products.prevPage}&limit=${limit}`
             
             return { status: 200, response: products }
         }catch(error){
