@@ -2,7 +2,7 @@
 import { Router } from "express";
 import fs from "fs"
 import { socketServer } from "../app.js";
-import { ProductManager } from "../dao/manager/manager_mongo/product.manager.js";
+import ProductManager from "../dao/manager/manager_mongo/product.manager.js";
 
 const productManager = new ProductManager()
 

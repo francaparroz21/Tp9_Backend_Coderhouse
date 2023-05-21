@@ -1,7 +1,7 @@
 import { Router } from "express";
 import fs from 'fs'
-import { ProductManager } from "../dao/manager/manager_mongo/product.manager.js";
-import { CartManager } from "../dao/manager/manager_mongo/cart.manager.js";
+import ProductManager from "../dao/manager/manager_mongo/product.manager.js";
+import CartManager from "../dao/manager/manager_mongo/cart.manager.js";
 
 const productManager = new ProductManager()
 const cartManager = new CartManager()

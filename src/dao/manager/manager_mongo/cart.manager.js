@@ -1,10 +1,10 @@
 import { cartModel } from "../../models/carts.model.js"
 import { productModel } from "../../models/products.model.js"
-import { ProductManager } from "./product.manager.js"
+import ProductManager from "./product.manager.js"
 
 const productManager = new ProductManager()
 
-export class CartManager{
+class CartManager{
     async getCarts(){
         try{
             const cartModel = await cartModel.find()
@@ -144,3 +144,5 @@ export class CartManager{
         }
     }
 }
+
+export default CartManager

@@ -1,32 +1,33 @@
 import { productModel } from "../../models/products.model.js"
 
-export class ProductManager{
-    async getProducts(limit = 10 , page = 1, query, sort){
-        try{
+class ProductManager{
+    getProducts = async (limit, page, query, sort) => {
+        let filter = {};
+        query? filter = {category: query} : filter = {};
 
-            let modelQuery;
-            !query ? (modelQuery = {}) : (modelQuery = { category: query });
+        const options = {
+            limit, 
+            page,
+            sort: {price: sort}
+        }
 
-            const params = {
-                page,
-                limit,
-                sort: { price: sort }
-              }
-
-            const products = await productModel.paginate(
-                modelQuery,
-                params,
-                function(error, result){
-                    return result
-                }
-            )
-
-            products.nextPage = `http://localhost:${process.env.port}/products?page=${products.nextPage}&limit=${limit}`
-            products.prevPage = `http://localhost:${process.env.port}/products?page=${products.prevPage}&limit=${limit}`
-            
-            return { status: 200, response: products }
-        }catch(error){
-            console.log(`error: ${error}`)
+        try {
+            const data = await Product.paginate(filter, options);
+            const response = {
+                status: "success",
+                payload: data.docs,
+                totalPages: data.totalPages,
+                prevPage: data.prevPage,
+                nextPage: data.nextPage,
+                page: data.page,
+                hasPrevPage: data.hasPrevPage,
+                hasNextPage: data.hasNextPage,
+                nextPage: `?limit=${limit}&page=${data.prevPage}`,
+                prevPage: `?limit=${limit}&page=${data.nextPage}`
+            } 
+            return response
+        } catch (error) {
+            console.log(`error: ${error}`);
         }
     }
 
@@ -106,3 +107,5 @@ export class ProductManager{
         }
     }
 }
+
+export default ProductManager
