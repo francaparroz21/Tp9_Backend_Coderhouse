@@ -4,6 +4,7 @@ const addForm = document.getElementById("addForm");
 
 addForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  console.log("add product")
 
   const title = addForm.elements.title.value;
   const description = addForm.elements.description.value;
@@ -47,9 +48,9 @@ const deleteForm = document.getElementById("deleteForm");
 deleteForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const _id = deleteForm.elements._id.value;
+  const id = deleteForm.elements._id.value;
 
-  socket.emit('deleteProduct', _id);
+  socket.emit('deleteProduct', id);
 });
 
 const input = document.getElementById('textbox');
