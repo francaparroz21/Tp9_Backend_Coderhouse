@@ -1,61 +1,41 @@
-//Imports.
-import express from "express";
-import productsRouter from "./controllers/products.controller.js"
-import cartsRouter from "./controllers/carts.controller.js";
-import viewsRouter from "./controllers/views.controller.js"
-import __dirname from "./utils.js";
-import handlebars from "express-handlebars"
-import { Server } from "socket.io";
-import fs from 'fs'
-import { PORT } from "./utils.js";
-import { MessageManager } from "./dao/manager/manager_mongo/message.manager.js";
+import express from 'express';
+import __dirname from './utils.js';
+import handlebars from 'express-handlebars';
+import viewsRouter from './routes/views.router.js';
+import {Server} from 'socket.io';
+import productRouter from './routes/products.router.js';
+import cartRouter from './routes/carts.router.js';
 
-//Create express app and their ports.
+import mongoose from 'mongoose';
+const MONGO = 'mongodb+srv://francaparroz21:kDMwP4kT3nscyeBZ@cluster0.bzsude5.mongodb.net/?retryWrites=true&w=majority';
+
+const PORT = '8080';
+
 const app = express();
+const conection = mongoose.connect(MONGO);
 
-//Listen '8080' ports.
-const appServer = app.listen(PORT, () => {
-    console.log(`Server started on ${PORT} ports.`)
-})
+const server = app.listen(PORT, ()=>{
+    console.log("Server open on ports: " + PORT);
+});
+const io = new Server(server);
 
-const messageManager = new MessageManager()
-
-//Server IO
-export const socketServer = new Server(appServer)
-
-socketServer.on('connection', async (socket) => {
-    console.log('Usuario encontrado', socket.id)
-
-    const messages = await messageManager.getMessages()
-
-    socket.emit("loadingMessages", messages.response)
-
-    
-    socket.on("message", async (data) => {
-        const { email, message } = data
-        
-        await messageManager.createMessage({ user: email, message })
-        const messages = await messageManager.getMessages()
-        
-        socket.emit("new-message", messages.response)
-    })
-
-    socket.on('disconnect', () => {
-        console.log('Usuario desconectado', socket.id)
-    })
-})
-//Handlebars.
-app.engine('handlebars', handlebars.engine())
-app.set('views', __dirname + '/views')
-app.set('view engine', 'handlebars')
-
-//static(public directory), urlencoded & json.
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '/public'))
+app.use(express.urlencoded({extended: true}));
+app.use('/api/products', productRouter);
+app.use('/api/carts', cartRouter);
 
-//Routes 'products' & 'carts'.
-app.use('/api/products', productsRouter)
-app.use('/api/carts', cartsRouter)
-app.use('/', viewsRouter)
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/views');
+app.set('view engine', 'handlebars');
+app.use(express.static(__dirname + '/public')); 
+app.use('/', viewsRouter);
 
+io.on('connection', socket =>{
+    console.log(`user on: ${socket.id}}`)
+
+    socket.on("messages", data =>{
+        logs.push({socketid: socket.id, mesage: data})
+        socketServerIO.emit('log', {logs})
+    })
+
+});

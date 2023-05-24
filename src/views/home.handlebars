@@ -1,12 +1,50 @@
-<ul class="products-list">
-    {{#each products}}
-        <div class="products-item">
-            <h2>{{this.title}}</h2>
-            <p>{{this.description}}</p>
-            <span>{{this.price}}</span>
-            {{#each this.thumbnails}}
-                <img class="thumbnail" src={{this}} alt="foto" srcset="">
+<h1>Products</h1>
+<div>
+    <table>
+        <tr> 
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th> 
+            <th>Price</th> 
+            <th>Code</th> 
+            <th>Stock</th> 
+            <th>Category</th> 
+            <th>Status</th>
+        </tr>
+        <tbody>
+            {{#each products}}
+                <tr>
+                    <td>{{this._id}}</td>
+                    <td>{{this.title}}</td>
+                    <td>{{this.description}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.code}}</td>
+                    <td>{{this.stock}}</td>
+                    <td>{{this.category}}</td>
+                    <td>{{this.status}}</td>
+                    <td><button>Add to Cart</button></td>
+                </tr>
             {{/each}}
-        </div>
-    {{/each}}
-</ul>
+        </tbody>
+    </table>
+    
+    {{#if hasPrevPage}}
+    <a href="/?page={{prevPage}}&limit={{limit}}&sort={{sort}}&query={{queryParam}}"><button>Prev</button></a>
+    {{/if}}
+    {{#if hasNextPage}}
+    <a href="/?page={{nextPage}}&limit={{limit}}&sort={{sort}}&query={{queryParam}}"><button>Next</button></a>
+    {{/if}}
+
+    
+    <p>Page 
+        {{#if hasPrevPage}}
+        <a href="/?page={{prevPage}}&limit={{limit}}&sort={{sort}}&query={{queryParam}}">{{prevPage}}</a>
+        {{/if}}
+        {{page}}
+        {{#if hasNextPage}}
+        <a href="/?page={{nextPage}}&limit={{limit}}&sort={{sort}}&query={{queryParam}}">{{nextPage}}</a>
+        {{/if}}
+    </p>
+    
+
+</div>
