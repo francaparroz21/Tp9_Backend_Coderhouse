@@ -54,10 +54,11 @@ router.get('/', async (req, res) => {
             nextLink: result.prevLink,
             limit,
             sort,
-            queryParam
+            queryParam,
+            user: req.session.user
         });
     } catch (error) {
-        console.log(`error: ${error}`)
+        console.log('Cannot get products with mongoose: '+error)
         res.status(500).send('Internal server error');
     }
 });
@@ -87,9 +88,46 @@ router.get('/carts/:cid', async (req, res) => {
         });
 
     } catch (error) {
-        console.log(`error: ${error}`)
+        console.log('Cannot get products with mongoose: '+error)
         res.status(500).send('Internal server error');
     }
 });
+
+// const adminAcces = (req,res,next) =>{
+//     console.log(req.session.user.rol);
+//     if(req.session.user.rol !== 'admin'){
+//         console.log('Only admin access');
+//         return res.redirect('/');
+//     } 
+//     next();
+// }
+
+// const privateAcces = (req,res,next)=>{
+//     if(!req.session.user) return res.redirect('/login');
+//     next();
+// }
+
+const publicAcces = (req,res,next) =>{
+    next();
+}
+
+router.get('/register', publicAcces, async (req,res)=>{
+    await managerAccess.saveLog('Register');
+    res.render('register')
+});
+
+router.get('/login', publicAcces, async (req,res)=>{
+    await managerAccess.saveLog('Login');
+    res.render('login')
+});
+
+// router.get('/users', privateAcces, adminAcces, async (req,res)=>{
+//     const users = await userModel.find().lean();
+//     const user = req.session.user;
+
+//      res.render('users', {
+//         users, user
+//     }) 
+// })
 
 export default router;

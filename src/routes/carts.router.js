@@ -18,7 +18,7 @@ router.get('/', async (req,res) => {
             res.send({result: "success", payload: cartsLimit});
         }
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot get carts with mongoose: '+error)
     }
 });
 
@@ -33,7 +33,7 @@ router.get('/:cid', async (req,res)=>{
             payload: result
         });
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot get the cart with mongoose: '+error);
         return res.send({status:"error", error: "ID not found"});
     }
 });
@@ -47,7 +47,7 @@ router.post('/', async (req,res) => {
             payload: result
         }); 
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot post the cart with mongoose: '+error)
     }
 });
 
@@ -69,7 +69,7 @@ router.post('/:cid/product/:pid', async (req,res) => {
             payload: result
         });
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot get the product with mongoose: '+error);
         return res.send({status:"error", error: "ID not found"});
     }
 });
@@ -99,7 +99,7 @@ router.delete('/:cid/products/:pid', async (req,res) => {
             payload: result
         });
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot delete the product with mongoose: '+error);
         return res.send({status:"error", error: "ID not found"});
     }
 });
@@ -121,12 +121,13 @@ router.delete('/:cid', async (req,res) => {
             payload: result
         });
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot delete the product with mongoose: '+error);
         return res.status(500).send({error: "ID not found"});
     } 
 });
 
 router.put('/:cid', async (req,res) => {
+    //Deberá actualizar el carrito con un arreglo de productos con el formato especificado
     try{
         await managerAccess.saveLog('UPDATE all products in a cart');
         
@@ -148,7 +149,7 @@ router.put('/:cid', async (req,res) => {
         });
 
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot update the cart with mongoose: '+error);
         return res.status(500).send({error: "Internal server error"});
     } 
 
@@ -156,6 +157,7 @@ router.put('/:cid', async (req,res) => {
 });
 
 router.put('/:cid/products/:pid', async (req,res) => {
+    //Deberá poder actualizar SÓLO la cantidad de ejemplares del producto por cualquier cantidad pasada desde req.body
 
     try{
         await managerAccess.saveLog('UPDATE product s quantity in a cart');
@@ -183,7 +185,7 @@ router.put('/:cid/products/:pid', async (req,res) => {
             payload: result
         });
     }catch(error){
-        console.log(`error: ${error}`)
+        console.log('Cannot delete the product with mongoose: '+error);
         return res.send({status:"error", error: "ID not found"});
     }
 

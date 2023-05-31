@@ -1,5 +1,19 @@
-<h1>Products</h1>
+<h3>Welcome
+    {{#if user}}
+        : {{user.name}} / {{user.email}} / {{user.rol}}
+        <a href="/api/sessions/logout"><button>Logout</button></a>
+    {{/if}}
+</h3>
+
+<h1>Products Home
+    {{#unless user}}
+        <a href="/register"><button>Sign Up</button></a>
+        <a href="/login"><button>Login</button></a>
+    {{/unless}}
+</h1>
+
 <div>
+    <br>
     <table>
         <tr> 
             <th>ID</th>
@@ -45,6 +59,9 @@
         <a href="/?page={{nextPage}}&limit={{limit}}&sort={{sort}}&query={{queryParam}}">{{nextPage}}</a>
         {{/if}}
     </p>
-    
+
+    {{#if hasPrevPage}}
+    <a href="/?page={{prevPage}}&limit={{limit}}&sort={{sort}}&query={{queryParam}}"><button>Prev</button></a>
+    {{/if}}
 
 </div>
