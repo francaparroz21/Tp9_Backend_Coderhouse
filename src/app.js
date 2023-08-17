@@ -9,9 +9,11 @@ import session from 'express-session';
 import productRouter from './routes/products.router.js';
 import cartRouter from './routes/carts.router.js';
 import sessionRouter from './routes/sessions.router.js';
+import passport from 'passport';
+import initializePassport from './config/passport.config.js';
 
 const DB = 'ecommerce';
-const MONGO = 'mongodb+srv://merkelgonzalo:dalemillo123@cluster0.a9rnj46.mongodb.net/' + DB;
+const MONGO = 'mongodb+srv://francaparroz21:LRaEDJg2ANVvjtpv@cluster0.bzsude5.mongodb.net/' + DB;
 const PORT = '8080';
 const app = express();
 const conection = mongoose.connect(MONGO);
@@ -27,39 +29,20 @@ app.use(session({
   resave:false,
   saveUninitialized:false
 }));
+initializePassport();
 
-/* const io = new Server(server); */
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
-app.use(express.static(__dirname + '/public')); //Important for use js y css files on templates
+app.use(express.static(__dirname + '/public')); 
 
 app.use('/', viewsRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 app.use('/api/sessions', sessionRouter);
 
-// io.on('connection', socket =>{
-//     console.log("New connected client")
-
-//     socket.on('newProduct', async (product) => {
-//         await productManager.addProduct(product);
-  
-//         io.emit('updateProducts', await productManager.getProducts());
-//     });
-
-//     socket.on('deleteProduct', async (id) => {
-//         await productManager.deleteProductById(id);
-  
-//         io.emit('updateProducts', await productManager.getProducts());
-//     });
-
-//     socket.on("messages", data =>{
-//         logs.push({socketid: socket.id, mesage: data})
-//         socketServerIO.emit('log', {logs})
-//     })
-
-// });
+app.use(passport.initialize());
+app.use(passport.session());

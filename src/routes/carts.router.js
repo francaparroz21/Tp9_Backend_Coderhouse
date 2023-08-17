@@ -75,7 +75,6 @@ router.post('/:cid/product/:pid', async (req,res) => {
 });
 
 router.delete('/:cid/products/:pid', async (req,res) => {
-    //Deberá eliminar del carrito el producto seleccionado
     try{
         await managerAccess.saveLog('DELETE a product in a cart');
         const idCart = req.params.cid;
@@ -105,7 +104,6 @@ router.delete('/:cid/products/:pid', async (req,res) => {
 });
 
 router.delete('/:cid', async (req,res) => {
-    //Deberá eliminar todos los productos del carrito
     try{
         await managerAccess.saveLog('DELETE all products in a cart');
         const idCart = req.params.cid;
@@ -127,7 +125,6 @@ router.delete('/:cid', async (req,res) => {
 });
 
 router.put('/:cid', async (req,res) => {
-    //Deberá actualizar el carrito con un arreglo de productos con el formato especificado
     try{
         await managerAccess.saveLog('UPDATE all products in a cart');
         
@@ -157,7 +154,6 @@ router.put('/:cid', async (req,res) => {
 });
 
 router.put('/:cid/products/:pid', async (req,res) => {
-    //Deberá poder actualizar SÓLO la cantidad de ejemplares del producto por cualquier cantidad pasada desde req.body
 
     try{
         await managerAccess.saveLog('UPDATE product s quantity in a cart');

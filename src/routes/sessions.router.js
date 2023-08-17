@@ -1,69 +1,38 @@
 import { Router } from 'express';
 import {userModel} from '../Dao/models/users.model.js';
+import { createHash, validatePassword } from '../utils.js';
+import passport from 'passport';
 
 const router = Router();
 
-router.post('/register', async (req, res) =>{
-
-    const {first_name, last_name, email, age, password} = req.body;
-    try{
-        const exist = await userModel.findOne({email});
-    
-        if(exist || email === "adminCoder@coder.com"){
-            return res.status(400).send({status:"error", error:"User already exists"});
-        }
-    
-        const user = {
-            first_name,
-            last_name,
-            email,
-            age,
-            password,
-            rol: "user"
-        };
-    
-        const result = await userModel.create(user);
-        res.send({status:"succes", message:"User registered"});
-
-    }catch(error) {
-        console.log('Cannot register with mongoose: '+error)
-        res.status(500).send('Internal server error');
-    }
+router.post('/register', passport.authenticate('register', {failureREdirect:'/failregister'}), async (req, res) =>{
+    res.send({status:"success", message:"User registered"});
 });
 
-router.post('/login', async (req,res)=>{
-    const { email, password } = req.body;
-    let user;
+router.get('/failregister', async (req, res) => {
+    console.log("Failed strategy");
+    res.send({error:"Error ocurred when try to register"});
+})
 
-    try{
-        
-        if(email === "adminCoder@coder.com" && password === "adminCod3r123"){
-            user = {
-                first_name: 'Administrador',
-                last_name: 'Del Sistema',
-                email: email,
-                age: 99,
-                rol: 'admin'
-            };
-        }else{
-            user = await userModel.findOne({email,password});
-        }
+router.post('/login', passport.authenticate('login',{failureRedirect:'/faillogin'}), async (req,res)=>{
+    console.log("Llegue al router bien")
+    if(!req.user) return res.status(400).send({status:"error", error: 'Invalid credentials'});
 
-        if(!user){
-            return res.status(400).send({status:"error", error:"Invalid data"})
-        }
-      
-        req.session.user = {
-            name: `${user.first_name} ${user.last_name}`,
-            email: user.email,
-            age: user.age,
-            rol: user.rol
-        }
-        res.send({status:"success", payload:req.session.user, message:"Welcome!"})
-    }catch(error) {
-        console.log('Cannot login with mongoose: '+error)
-        res.status(500).send('Internal server error');
+    req.session.user = {
+        name: req.user.first_name,
+        age: req.user.age,
+        email: req.user.email,
+        rol: req.user.rol
     }
+
+    res.send({status:"success", payload:req.user, message:"Login!!!"})
+});
+
+router.get('/faillogin', async (req, res)=>{
+
+    console.log('Failed strategy');
+    res.send({error: 'Error ocurred when try to login...'});
+
 });
 
 router.get('/logout', (req,res)=>{
@@ -71,6 +40,13 @@ router.get('/logout', (req,res)=>{
         if(err) return res.status(500).send({status:"error", error:"Couldn't close session"});
         res.redirect('/login');
     })
-})
+});
+
+router.get('/github', passport.authenticate('github'), async (req,res)=>{});
+
+router.get('/githubcallback', passport.authenticate('github',{failureRedirect:'/login'}), async (req,res)=>{
+    req.session.user = req.user;
+    res.redirect('/')
+});
 
 export default router;
