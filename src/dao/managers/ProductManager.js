@@ -11,7 +11,7 @@ export default class ProductManager{
         const products = await this.getProducts();
 
         if(!product.title || !product.description || !product.code || !product.price || !product.stock || !product.category){
-            console.log("ERROR: Can't add this product because contain an empty value");
+            console.log("ERROR: Can't add this product because contains a empty value");
         }else{
             product.status = true;
             
